@@ -1,38 +1,52 @@
-import requests
-import json
+import openai
 
-API_KEY = "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"
-API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
+# Set the API key
+openai.api_key = "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"
 
-def generate_chat_completion(messages, model="gpt-3.5-turbo", temperature=1, max_tokens=None):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {API_KEY}",
-    }
+# Choose a model
+MODEL_ENGINE = "text-davinci-003"
 
-    data = {
-        "model": model,
-        "messages": messages,
-        "temperature": temperature,
-    }
+def get_response(prompt):
+    """Returns the response for the given prompt using the OpenAI API."""
+    completions = openai.Completion.create(
+             engine = MODEL_ENGINE,
+             prompt = prompt,
+         max_tokens = 1024,
+        temperature = 0.7,
+    )
+    return completions.choices[0].text
 
-    if max_tokens is not None:
-        data["max_tokens"] = max_tokens
+def handle_input(
+               input_str : str,
+    conversation_history : str,
+                USERNAME : str,
+                 AI_NAME : str,
+                 ):
+    """Updates the conversation history and generates a response using GPT-3."""
+    # Update the conversation history
+    conversation_history += f"{USERNAME}: {input_str}\n"
+   
+    # Generate a response using GPT-3
+    message = get_response(conversation_history)
 
-    response = requests.post(API_ENDPOINT, headers=headers, data=json.dumps(data))
+    # Update the conversation history
+    conversation_history += f"{AI_NAME}: {message}\n"
 
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"]
-    else:
-        raise Exception(f"Error {response.status_code}: {response.text}")
+    # Print the response
+    print(f'{AI_NAME}: {message}')
     
-print("What can I help you with?: ")
-while True:
-    user_input = input("")
-    messages = [
-        {"role": "system", "content": "You are a bot is created to respond to text messages. Keep conversation with the user and remember previous responses."},
-        {"role": "user", "content": user_input }
-    ]
+    return conversation_history
 
-    response_text = generate_chat_completion(messages)
-    print(response_text)
+# Set the initial prompt to include a personality and habits
+INITIAL_PROMPT = ('''I am a friendly artificial intelligence that responds over text message.''')
+conversation_history = INITIAL_PROMPT + "\n"
+
+USERNAME = "USER"
+AI_NAME = "AI"
+
+while True:
+    # Get the user's input
+    user_input = input(f"{USERNAME}: ")
+
+    # Handle the input
+    conversation_history = handle_input(user_input, conversation_history, USERNAME, AI_NAME)
