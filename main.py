@@ -1,7 +1,7 @@
 import requests
 import json
 
-API_KEY = "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"
+API_KEY = "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"
 API_ENDPOINT = "https://api.openai.com/v1/chat/completions"
 
 def generate_chat_completion(messages, model="gpt-3.5-turbo", temperature=1, max_tokens=None):
