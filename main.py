@@ -1,7 +1,8 @@
 import openai
 
 # Set the API key
-openai.api_key = "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"
+# environment variable
+openai.api_key = ""
 
 # Choose a model
 MODEL_ENGINE = "text-davinci-003"
@@ -11,7 +12,7 @@ def get_response(prompt):
     completions = openai.Completion.create(
              engine = MODEL_ENGINE,
              prompt = prompt,
-         max_tokens = 1024,
+         max_tokens = 325,
         temperature = 0.7,
     )
     return completions.choices[0].text
@@ -38,7 +39,7 @@ def handle_input(
     return conversation_history
 
 # Set the initial prompt to include a personality and habits
-INITIAL_PROMPT = ('''I am a friendly artificial intelligence that responds over text message.''')
+INITIAL_PROMPT = ('''You are a helpful assistant that responds over text message.''')
 conversation_history = INITIAL_PROMPT + "\n"
 
 USERNAME = "USER"
